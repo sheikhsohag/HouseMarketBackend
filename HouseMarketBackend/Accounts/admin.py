@@ -1,43 +1,34 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.utils.translation import gettext_lazy as _
 from .models import User
 
 class UserAdmin(BaseUserAdmin):
-    # Define the forms for adding and changing users
-    add_form = UserCreationForm
-    form = UserChangeForm
-
     # The fields to be used in displaying the User model.
-    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'role')
+    list_display = ('email', 'first_name', 'last_name', 'role', 'is_staff', 'is_superuser', 'is_active')
+    list_filter = ('role', 'is_staff', 'is_superuser', 'is_active')
+    search_fields = ('email', 'first_name', 'last_name')
+    ordering = ('email',)
 
+    # Sections to organize the form layout
     fieldsets = (
-        (None, 
-         {'fields': ('email', 'password')}),
-         
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'profile_image', 'address', 'gender', 'role')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        (None, {'fields': ('email', 'password')}),
+        (_('Personal Info'), {'fields': ('first_name', 'last_name', 'profile_image', 'address', 'gender')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        (_('Role Info'), {'fields': ('role',)}),
+        (_('Important dates'), {'fields': ('last_login',)}),
     )
-    
-    # Fields shown when creating a new user
+
+    # Fields when creating a new user (i.e., no password entered yet)
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2'),
+            'fields': ('email', 'password1', 'password2', 'first_name', 'last_name', 'role', 'is_staff', 'is_superuser'),
         }),
     )
 
-    search_fields = ('email', 'first_name', 'last_name')
-    ordering = ('email',)
-    filter_horizontal = ()
+    # Admin page settings for better customization
+    filter_horizontal = ('groups', 'user_permissions',)
 
-    # Override save_model to hash the password
-    def save_model(self, request, obj, form, change):
-        if form.is_valid() and form.cleaned_data.get('password1'):
-            # This ensures that the password is hashed
-            obj.set_password(form.cleaned_data.get('password1'))
-        super().save_model(request, obj, form, change)
-
-# Register the User model with the custom UserAdmin
+# Register the custom UserAdmin
 admin.site.register(User, UserAdmin)
