@@ -20,28 +20,21 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('role', 'admin')
         return self.create_user(email, password=password, **extra_fields)
 
-    
-
-def default_profile_image():
-    return "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
 
 # Custom User Model
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='Email', max_length=255, unique=True)
     first_name = models.CharField(max_length=200, default="First Name")
     last_name = models.CharField(max_length=200, default="Last Name")
-    profile_image = models.ImageField(upload_to='profile_images/', default=default_profile_image, null=True, blank=True)
-    address = models.CharField(max_length=255, null=True, blank=True)
     gender_choices = (
         ('Male', 'Male'),
         ('Female', 'Female'),
         ('Other', 'Other'),
     )
-    gender = models.CharField(max_length=6, choices=gender_choices, blank=True, null=True)
+    gender = models.CharField(max_length=20, choices=gender_choices, blank=True, null=True)
     role_choices = (
         ('customer', 'Customer'),
         ('restraurant', 'Restraurant'),
-        ('admin', 'Admin'),
     )
     role = models.CharField(max_length=15, choices=role_choices, default='customer')
 
@@ -52,7 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'gender', 'role']
 
     def __str__(self):
         return self.email
@@ -68,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.role == 'admin'
 
     @property
-    def is_rider(self):
+    def is_restraurant(self):
         return self.role == 'restraurant'
 
     @property
