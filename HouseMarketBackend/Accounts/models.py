@@ -35,6 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role_choices = (
         ('customer', 'Customer'),
         ('restraurant', 'Restraurant'),
+        ('admin', 'Admin'),
     )
     role = models.CharField(max_length=15, choices=role_choices, default='customer')
 
