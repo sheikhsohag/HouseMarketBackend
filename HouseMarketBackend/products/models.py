@@ -1,10 +1,12 @@
 from django.db import models
 from Accounts.models import User
+from django.db import models
+from django.utils.text import slugify
 
 
 class Products(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Reference to User model
-    name = models.CharField(max_length=255)  # Product name
+    product_name = models.CharField(max_length=255)  # Product name
     image = models.ImageField(upload_to='products/', null=True, blank=True)
     category = models.CharField(max_length=100, null=True, blank=True)
     brand = models.CharField(max_length=100, null=True, blank=True)
@@ -22,3 +24,19 @@ class Products(models.Model):
 
     class Meta:
         ordering = ['-created_at']  # Order by newest first
+
+
+
+
+class Category(models.Model):
+    category = models.CharField(max_length=155, unique=True)
+    category_slug = models.SlugField(max_length=155, unique=True, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.category_slug:
+            self.category_slug = slugify(self.category)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.category
+

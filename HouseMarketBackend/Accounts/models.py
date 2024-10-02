@@ -26,6 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='Email', max_length=255, unique=True)
     first_name = models.CharField(max_length=200, default="First Name")
     last_name = models.CharField(max_length=200, default="Last Name")
+
     gender_choices = (
         ('Male', 'Male'),
         ('Female', 'Female'),
@@ -35,18 +36,25 @@ class User(AbstractBaseUser, PermissionsMixin):
     role_choices = (
         ('customer', 'Customer'),
         ('restraurant', 'Restraurant'),
+        ('rider', 'Rider'),
         ('admin', 'Admin'),
     )
     role = models.CharField(max_length=15, choices=role_choices, default='customer')
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    street_address = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
+    house_holding_number = models.CharField(max_length=230, null=True, blank=True)
+    contact_number = models.CharField(max_length=15, blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)  # Staff status (admin)
     is_superuser = models.BooleanField(default=False)  # Superuser status
-
+    
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'gender', 'role']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def __str__(self):
         return self.email
@@ -68,6 +76,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_customer(self):
         return self.role == 'customer'
+    
+    @property
+    def is_rider(self):
+        return self.role == 'rider'
 # Default profile image function
 
 

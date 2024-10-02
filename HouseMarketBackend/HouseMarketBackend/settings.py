@@ -106,6 +106,8 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 EMAIL_USE_TLS = True
 
 
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -185,8 +187,8 @@ BASE_API_URL = "http://localhost:5173"
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE':True,
-    'ACTIVATION_URL':'api/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL':True,
+    'ACTIVATION_URL':'api/activate/{uid}/{token}',
     'SEND_CONFIRMATION_EMAIL':True,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION':True,
     'PASSWORD_RESET_CONFIRM_URL': 'password-reset/{uid}/{token}',
@@ -204,7 +206,6 @@ DJOSER = {
         'password_reset': 'Accounts.email.PasswordResetEmail',
         'password_changed_confirmation': 'Accounts.email.PasswordChangedConfirmationEmail',
     },
-
 
 }
 
