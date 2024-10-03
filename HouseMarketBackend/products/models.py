@@ -5,7 +5,8 @@ from django.utils.text import slugify
 
 
 class Products(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Reference to User model
+    # give user id...during form control 
+    user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True, null=True)  # Reference to User model
     product_name = models.CharField(max_length=255)  # Product name
     image = models.ImageField(upload_to='products/', null=True, blank=True)
     category = models.CharField(max_length=100, null=True, blank=True)
@@ -20,7 +21,7 @@ class Products(models.Model):
    
 
     def __str__(self):
-        return f"{self.name} by {self.user.email}"  # Display product name with associated user
+        return f"{self.product_name} by {self.user.email}"  # Display product name with associated user
 
     class Meta:
         ordering = ['-created_at']  # Order by newest first
