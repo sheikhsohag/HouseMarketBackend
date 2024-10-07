@@ -6,7 +6,7 @@ from .models import User
 # Custom admin class
 class UserAdmin(BaseUserAdmin):
     ordering = ['email']
-    list_display = ['email', 'first_name', 'last_name', 'role', 'is_active', 'is_staff']
+    list_display = ['id','email', 'first_name', 'last_name', 'role', 'is_active', 'is_staff']
     list_filter = ['role', 'is_active', 'is_staff']
 
     # Define the fields to display in the admin form for viewing/editing users
