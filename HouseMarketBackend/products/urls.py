@@ -3,7 +3,7 @@ from django.urls import path, include
 from .views import ProductApiView,  CategoryApiView
 
 from products import views
-from .views import CartApiView, CartItemAPIView
+from .views import CartApiView, CartItemAPIView, OrderAPIView
 
 
 
@@ -19,5 +19,10 @@ urlpatterns = [
     path('cart/', CartApiView.as_view(), name='cart-detail'),
     path('cart/items/', CartItemAPIView.as_view(), name='cart-items'),
     path('cart/item/<int:pk>/', CartItemAPIView.as_view(), name='cart-item'),
+
+    # order 
+
+    path('orders/', OrderAPIView.as_view(), name="order"),  
+    path('orders/<str:pk>/', OrderAPIView.as_view(), name='single-order'),  
 
 ]

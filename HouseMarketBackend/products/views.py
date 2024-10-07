@@ -233,3 +233,46 @@ class CartItemAPIView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         cart_item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderAPIView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure user is authenticated
+
+    def get(self, request, pk=None):
+        if pk:
+            try:
+                order = Order.objects.get(pk=pk, user=request.user)
+                serializer = OrderSerializer(order)
+                return Response(serializer.data)
+            except Order.DoesNotExist:
+                return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            orders = Order.objects.filter(user=request.user)
+            serializer = OrderSerializer(orders, many=True)
+            return Response(serializer.data)
+
+    def post(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)  # Set the authenticated user as the order owner
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk, user=request.user)
+            serializer = OrderSerializer(order, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Order.DoesNotExist:
+            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk, user=request.user)
+            order.delete()
+            return Response({"message": "Order deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except Order.DoesNotExist:
+            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
